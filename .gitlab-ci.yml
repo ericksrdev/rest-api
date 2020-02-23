@@ -24,6 +24,5 @@ deploy:
     - gem install dpl
     - echo "Attempting to deploy to production server"
     - dpl --provider=heroku --app=$HEROKU_APP_SINGLE_ENV --api-key=$HEROKU_API_KEY
-  when: manual
   only:
     - master
