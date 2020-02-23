@@ -1,0 +1,20 @@
+{
+    "name": "erick/rest-api",
+    "description": "This is a simple Users CRUD API with vanilla PHP",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Erick Sandoval",
+            "email": "erick.sr@yahoo.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^2.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Src\\": "src/"
+        }
+    }
+}
