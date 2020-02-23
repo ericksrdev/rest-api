@@ -1,0 +1,28 @@
+image: docker.io/erickweeds/api-rest-vanilla-php:latest
+
+before_script:
+  - apt-get update -yq
+  - apt-get install -y ruby-dev
+  - gem install dpl
+
+stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  script:
+    - echo "Tests stuff will be added"
+
+deploy:
+  stage: deploy
+  image: ruby:latest
+  environment:
+    name: production
+  script:
+    - gem install dpl
+    - echo "Attempting to deploy to production server"
+    - dpl --provider=heroku --app=$HEROKU_APP_SINGLE_ENV --api-key=$HEROKU_API_KEY
+  when: manual
+  only:
+    - master
