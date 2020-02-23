@@ -27,4 +27,4 @@ RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
 #Installing dependencies
 WORKDIR /var/www/html
 
-RUN composer install
+RUN composer install --prefer-dist --no-progress
