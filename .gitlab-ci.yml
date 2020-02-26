@@ -10,7 +10,7 @@ stages:
   - deploy
 
 test:
-  stage: Unit-testing
+  stage: test
   environment:
     name: testing
   script:
