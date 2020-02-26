@@ -10,11 +10,21 @@
         }
     ],
     "require": {
-        "vlucas/phpdotenv": "^2.4"
+        "vlucas/phpdotenv": "^2.4",
+        "ext-pdo": "*",
+        "phpunit/phpunit": "9.0.1"
     },
     "autoload": {
+        "classmap": [
+            "src"
+        ],
         "psr-4": {
-            "Src\\": "src/"
+            "App\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests"
+        ]
     }
 }
