@@ -1,12 +1,21 @@
 <?php
 
 require 'vendor/autoload.php';
+
+use App\Database\DatabaseHandler;
+use App\Lib\AppDispatcher;
 use Dotenv\Dotenv;
-use Src\database\DatabaseHandler;
 
-$dotenv = new Dotenv(__DIR__);
 
-$dotenv->load();
+//Loading .env vars to php env
 
-$dbConnection = (new Src\Database\DatabaseHandler())->getConnection();
+$dirArray = explode('/', __DIR__);
+
+$rootDir = implode('/', array_slice($dirArray, 0, count($dirArray) - 1));
+
+(new Dotenv($rootDir))->load();
+
+$dbConnection = (new DatabaseHandler())->connection();
+
+$app = new AppDispatcher();
 

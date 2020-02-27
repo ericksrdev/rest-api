@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Database;
+namespace App\Database;
 
 use PDO;
 use App\Lib\DatabaseAdapter;
@@ -15,6 +15,7 @@ class DatabaseHandler
         {
             case 'mysql':
                 $this->engine = MySQLConnector::getInstance();
+                break;
             case 'pgsql':
                 throw new \Exception('Database Engine ' . getenv('DB_ENGINE') . ' not implemented yet');
             case 'sqlserver':

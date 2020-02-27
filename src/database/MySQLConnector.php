@@ -12,7 +12,7 @@ use App\Lib\DatabaseAdapter;
 class MySQLConnector implements DatabaseAdapter
 {
 
-    private static DatabaseAdapter $instance;
+    private static ?DatabaseAdapter $instance = null;
 
     private PDO $connection;
 
@@ -34,7 +34,7 @@ class MySQLConnector implements DatabaseAdapter
     /**
      * Private helper to instantiate a new MYSQL PDO
      */
-    private function connect()
+    public function connect()
     {
         $dbHost       = getenv('DB_HOST') ?? 'localhost';
         $dbPort       = getenv('DB_PORT') ?? '3306';
