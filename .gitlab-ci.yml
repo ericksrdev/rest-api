@@ -11,8 +11,11 @@ stages:
 
 test:
   stage: test
+  environment:
+    name: testing
   script:
-    - echo "Tests stuff will be added"
+    - composer install --no-progress --prefer-dist
+    - ./vendor/bin/phpunit tests/ --testdox
 
 deploy:
   stage: deploy
