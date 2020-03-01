@@ -7,14 +7,20 @@ use App\Database\DatabaseHandler;
 use App\Lib\AppDispatcher;
 use Dotenv\Dotenv;
 
-
 //Loading .env vars to php env
 
 $dirArray = explode('/', __DIR__);
 
 $rootDir = implode('/', array_slice($dirArray, 0, count($dirArray) - 1));
 
-(new Dotenv($rootDir))->load();
+try
+{
+    (new Dotenv($rootDir))->load();
+}
+catch (Exception $e)
+{
+    //Running with prod .env values
+}
 
 $dbConnection = (new DatabaseHandler())->connection();
 
