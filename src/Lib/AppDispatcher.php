@@ -5,6 +5,7 @@ namespace App\Lib;
 use App\Lib\Exceptions\HttpException;
 use App\Lib\Http\RequestValidator;
 use App\Lib\Routing\Routes;
+use PDO;
 
 /**
  * Front controller of the application, this class is responsible for handling all the request lifecycle
@@ -39,8 +40,7 @@ class AppDispatcher
         {
             $currentRequestAction = RequestValidator::processRequest($requestURI, $requestMethod);
 
-
-            $invoker = new Invoker($requestParams,$currentRequestAction['params']);
+            $invoker = new Invoker($requestParams, $currentRequestAction['params']);
 
             $response = $invoker->callAction($currentRequestAction['controllerClass'], $currentRequestAction['controllerMethod']);
 

@@ -25,4 +25,3 @@ catch (Exception $e)
 $dbConnection = (new DatabaseHandler())->connection();
 
 $app = new AppDispatcher();
-
