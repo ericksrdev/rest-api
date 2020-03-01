@@ -3,7 +3,7 @@
 namespace App\Database;
 
 use PDO;
-use App\Lib\DatabaseAdapter;
+use App\Lib\Database\DatabaseAdapter;
 
 /**
  * Class MySQLConnector

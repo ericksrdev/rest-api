@@ -3,7 +3,6 @@
 namespace App\Lib;
 
 use PDO;
-use App\Database\DatabaseHandler;
 
 abstract class RootModel
 {

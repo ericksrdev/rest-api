@@ -1,6 +1,6 @@
 <?php
 
-use App\Lib\QueryBuilder;
+use App\Lib\Database\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 
 class QueryBuilderTest extends TestCase

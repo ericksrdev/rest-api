@@ -12,7 +12,8 @@
     "require": {
         "vlucas/phpdotenv": "^2.4",
         "ext-pdo": "*",
-        "phpunit/phpunit": "9.0.1"
+        "phpunit/phpunit": "9.0.1",
+        "ext-json": "*"
     },
     "autoload": {
         "classmap": [
