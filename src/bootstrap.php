@@ -19,4 +19,3 @@ $rootDir = implode('/', array_slice($dirArray, 0, count($dirArray) - 1));
 $dbConnection = (new DatabaseHandler())->connection();
 
 $app = new AppDispatcher();
-

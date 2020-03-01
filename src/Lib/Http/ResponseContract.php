@@ -7,11 +7,11 @@ interface ResponseContract
     /**
      * Sends a JSON formatted response with application/json header set
      *
-     * @param array $data     array Data to be parsed to json
+     * @param mixed $data     array Data to be parsed to json
      * @param int $statusCode int HTTP status code
      * @return mixed
      */
-    public function json(array $data = [], int $statusCode = 200);
+    public function json($data = null, int $statusCode = 200);
 
     /**
      * Sends a text formatted response with plain text header set
