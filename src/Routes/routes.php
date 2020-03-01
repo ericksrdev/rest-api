@@ -9,6 +9,9 @@
 use App\Lib\Routing\Routes;
 
 Routes::get('/','IndexController@sayHi');
-Routes::get('/api/v1/users/{user_id}','IndexController@index');
+
+Routes::get('/api/v1/users','UsersController@index');
+
+Routes::get('/api/v1/users/{user_id}','UsersController@show');
 
 
