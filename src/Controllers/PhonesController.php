@@ -19,6 +19,13 @@ class PhonesController extends Controller implements RestController
 
     public function show(Request $request)
     {
+        $requiredParams = ['phone_id'];
+
+        if ( ! $request->validateRequired($requiredParams))
+        {
+            return $this->json(['message' => 'Required parameters not found (number, user_id)'], 400);
+        }
+
         $phone = Phone::find($request->get('phone_id'));
 
         if ($phone === null)

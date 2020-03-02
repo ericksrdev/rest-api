@@ -171,7 +171,7 @@ abstract class RootModel
             $this->id = $this->id === null ? (int) static::$connection->lastInsertId() : $this->id;
         }
 
-        return (bool) $rowCount ;
+        return (bool) $rowCount;
     }
 
     public function delete()
@@ -283,7 +283,21 @@ abstract class RootModel
                 {
                     foreach ($val as &$relatedAttribute)
                     {
-                        $relatedAttribute = $relatedAttribute->toArray();
+
+                        if (is_array($relatedAttribute))
+                        {
+                            foreach ($relatedAttribute as $key => &$val)
+                            {
+                                if (is_object($val))
+                                {
+                                    $val = $val->toArray();
+                                }
+                            }
+                        }
+                        if (is_object($relatedAttribute))
+                        {
+                            $relatedAttribute = $relatedAttribute->toArray();
+                        }
                     }
                 }
 

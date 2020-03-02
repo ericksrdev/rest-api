@@ -29,16 +29,12 @@ Routes::delete('/api/v1/users/{user_id}','UsersController@destroy');
 
 Routes::post('/api/v1/users/{user_id}/phones','PhonesController@store');
 
-Routes::get('/api/v1/users/{user_id}/phones','PhonesController@store');
-
 /**
  * User's emails
  */
 
 
-Routes::post('/api/v1/users/{user_id}/emails','PhonesController@store');
-
-Routes::get('/api/v1/users/{user_id}/emails','PhonesController@store');
+Routes::post('/api/v1/users/{user_id}/emails','EmailsController@store');
 
 /**
  * Phones Routes
