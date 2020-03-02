@@ -13,7 +13,8 @@
         "vlucas/phpdotenv": "^2.4",
         "ext-pdo": "*",
         "phpunit/phpunit": "9.0.1",
-        "ext-json": "*"
+        "ext-json": "*",
+        "dejan7/httpquest": "0.3.0"
     },
     "autoload": {
         "classmap": [

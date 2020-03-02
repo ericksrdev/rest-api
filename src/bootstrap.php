@@ -25,3 +25,6 @@ catch (Exception $e)
 $dbConnection = (new DatabaseHandler())->connection();
 
 $app = new AppDispatcher();
+
+$HttpQuest = new \HTTPQuest\HTTPQuest();
+$HttpQuest->decode($_POST, $_FILES);
