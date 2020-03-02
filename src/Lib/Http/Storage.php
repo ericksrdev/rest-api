@@ -7,11 +7,12 @@ class Storage
     /**
      * Stores a uploaded file
      * @param array $file array in $_FILES format
+     * @param bool $copy  flag to use copy or move_uploaded_file
      *
      * @return null|string It returns the path of the uploaded file if it's successfully uploaded
      *                     otherwise it returns null
      */
-    public static function storeInLocalDisk(array $file)
+    public static function storeInLocalDisk(array $file, $copy = false)
     {
         $target_file_name = 'profile_picture_' . uniqid();
 
@@ -19,9 +20,16 @@ class Storage
 
         $target_storage_folder = 'public/storage/';
 
-        $target_file_path = $target_storage_folder . $target_file_name .'.'. $target_extension;
+        $target_file_path = $target_storage_folder . $target_file_name . '.' . $target_extension;
 
-        $result = move_uploaded_file($file['tmp_name'], $target_file_path);
+        if ($copy)
+        {
+            $result = copy($file['tmp_name'], $target_file_path);
+        }
+        else
+        {
+            $result = move_uploaded_file($file['tmp_name'], $target_file_path);
+        }
 
         if ($result === true)
         {

@@ -5,10 +5,16 @@ namespace App\Lib;
 use App\Database\DatabaseHandler;
 use App\Lib\Database\QueryBuilder;
 use PDO;
+use phpDocumentor\Reflection\Types\Static_;
+use function PHPUnit\Framework\containsOnly;
 
 abstract class RootModel
 {
     protected array $attributes = [];
+
+    protected array $hidden = [];
+
+    private static array $nonMutable = ['table', 'primaryKey', 'created_at', 'updated_at'];
 
     protected static ?string $table = null;
 
@@ -17,6 +23,8 @@ abstract class RootModel
     protected static ?PDO $connection = null;
 
     protected bool $saved;
+
+    protected static string $primaryKey;
 
     public function __construct($connection = null)
     {
@@ -130,32 +138,52 @@ abstract class RootModel
 
     public function save()
     {
+        static::bootIfNotBooted();
         $query = '';
         /**
          * If a primary key attribute is set, this is an update
          */
 
         $query = QueryBuilder::buildModelQuery(
-            $this->attributes,
-            ! isset($this->attributes[$this->primaryKey])
+            $this->getMutableParameters(),
+            ! isset($this->attributes['id'])
                 ?
                 QueryBuilder::INSERT_QUERY_TYPE
                 :
-                QueryBuilder::UPDATE_QUERY_TYPE
+                QueryBuilder::UPDATE_QUERY_TYPE,
+            static::$table,
+            $this->attributes['id'] ?? null
         );
 
-        $parsedAttributes = QueryBuilder::parseModelAttributes($this->attributes);
+        $parsedAttributes = QueryBuilder::parseModelAttributes($this->getMutableParameters());
 
-        $statement = $this->connection->prepare($query);
+        $statement = static::$connection->prepare($query);
 
         $statement->execute($parsedAttributes);
 
-        return (bool) $statement->rowCount();
+        $rowCount = $statement->rowCount();
+
+        if ($rowCount)
+        {
+            $this->id = $this->id === null ? (int) static::$connection->lastInsertId() : $this->id;
+        }
+
+        return (bool) $rowCount;
     }
 
     public function delete()
     {
+        static::bootIfNotBooted();
 
+        $statement = "DELETE FROM " . static::$table . " WHERE id = :ID";
+
+        $statement = static::$connection->prepare($statement);
+
+        $statement->execute([
+                                ':ID' => $this->attributes['id'],
+                            ]);
+
+        return (bool) $statement->rowCount();
     }
 
     private static function prepareFetchRelationships($result)
@@ -194,10 +222,15 @@ abstract class RootModel
             }
         }
 
-        if ($relation['type'] === 'hasMany')
+        switch ($relation['type'])
         {
-
-            $relationQueryResult = $relation['class_reference']::findWhereIn($relation['foreign_key'], $localKeyValues);
+            case 'hasMany':
+                $relationQueryResult = $relation['class_reference']::findWhereIn($relation['foreign_key'], $localKeyValues);
+                break;
+            case 'belongsTo':
+            case 'hasOne':
+                $relationQueryResult = $relation['class_reference']::find($relation['foreign_key']);
+                break;
         }
 
         return $relationQueryResult;
@@ -211,10 +244,34 @@ abstract class RootModel
         }
     }
 
+    private function getMutableParameters()
+    {
+        $params = [];
+
+        foreach ($this->attributes as $key => $val)
+        {
+            if ($key == 'id')
+            {
+                continue;
+            }
+            if ( ! in_array($key, static::$nonMutable) && ! in_array($key, array_column(static::$relations, 'name')))
+            {
+                $params[$key] = $val;
+            }
+        }
+
+        return $params;
+    }
+
     public function toArray()
     {
         foreach ($this->attributes as $key => &$val)
         {
+            if (in_array($key, static::$nonMutable) || in_array($key, $this->hidden))
+            {
+                continue;
+            }
+
             if (in_array($key, array_column(static::$relations, 'name')))
             {
                 if (is_array($val))
@@ -236,9 +293,12 @@ abstract class RootModel
 
     public function __set($name, $value)
     {
-        $this->attributes[$name] = $value;
+        if ($name !== 'table' && $name !== 'primaryKey')
+        {
+            $this->attributes[$name] = $value;
 
-        $this->saved = false;
+            $this->saved = false;
+        }
     }
 
     public function __get($name)
@@ -250,5 +310,5 @@ abstract class RootModel
     {
         return json_encode($this->attributes);
     }
-    
+
 }

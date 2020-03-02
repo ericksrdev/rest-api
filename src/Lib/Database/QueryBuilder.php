@@ -13,9 +13,10 @@ class QueryBuilder
      * @param array $attributes
      * @param string $type
      * @param $tableName
+     * @param $id
      * @return string
      */
-    public static function buildModelQuery(array $attributes, string $type, string $tableName)
+    public static function buildModelQuery(array $attributes, string $type, string $tableName, $id = null)
     {
         $sql = "";
 
@@ -48,7 +49,7 @@ class QueryBuilder
 
                 $sql = rtrim($sql, ',');
 
-                $sql .= " WHERE id = :PRIMARY_KEY";
+                $sql .= " WHERE id = $id";
                 break;
         }
 
