@@ -12,9 +12,10 @@ class QueryBuilder
      *
      * @param array $attributes
      * @param string $type
+     * @param $tableName
      * @return string
      */
-    public static function buildModelQuery(array $attributes, string $type)
+    public static function buildModelQuery(array $attributes, string $type, string $tableName)
     {
         $sql = "";
 
@@ -31,15 +32,15 @@ class QueryBuilder
         switch ($type)
         {
             case self::INSERT_QUERY_TYPE:
-                $sql .= "INSERT INTO :TABLE_NAME (" . implode(',', array_map('strtolower', $attributeNames)) . ")";
+                $sql .= "INSERT INTO $tableName (" . implode(',', array_map('strtolower', $attributeNames)) . ")";
 
                 $attributeNames = array_map(fn ($item) => ":$item", $attributeNames);
 
-                $sql .= " VALUES (" . implode(',', $attributeNames). ")";
+                $sql .= " VALUES (" . implode(',', $attributeNames) . ")";
 
                 break;
             case self::UPDATE_QUERY_TYPE:
-                $sql .= "UPDATE :TABLE_NAME SET";
+                $sql .= "UPDATE $tableName SET";
                 foreach ($attributeNames as $attributeName)
                 {
                     $sql .= " " . strtolower($attributeName) . " = :$attributeName,";
@@ -65,6 +66,7 @@ class QueryBuilder
 
         foreach ($attributes as $key => $val)
         {
+            $key                  = strtoupper($key);
             $parsedArray[":$key"] = $val;
         }
 
