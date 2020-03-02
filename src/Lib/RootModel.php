@@ -110,18 +110,73 @@ abstract class RootModel
             $operator = '=';
         }
 
-        $statement = "SELECT * FROM " . static::$table . " WHERE ? " . $operator . " ?";
+        $statement = "SELECT * FROM " . static::$table . " WHERE $column " . $operator . " ?";
 
         $statement = static::$connection->prepare($statement);
 
         $statement->execute([
-                                $column,
                                 $value,
                             ]);
 
         $result = $statement->fetchAll(PDO::FETCH_CLASS, get_called_class());
 
         return $result;
+    }
+
+    /**
+     * Process many where clauses using an array
+     * [
+     *  [
+     *    $column,
+     *    {Operator (AND|OR)},
+     *    $value
+     *  ]
+     * ]
+     *
+     * @param array $where
+     * @param string $operator (AND,OR)
+     * @param bool $disableIntrospection
+     * @return array
+     */
+    public static function findWhereMany(array $where, $operator = 'AND', $disableIntrospection = true)
+    {
+        static::bootIfNotBooted();
+
+        $statement = "SELECT * FROM " . static::$table . " WHERE ";
+
+        $values = [];
+
+        foreach ($where as $whereClause)
+        {
+
+            if (count($whereClause) === 3)
+            {
+                if (count($values) > 0)
+                {
+                    $statement .= "$operator $whereClause[0] $whereClause[1] ? ";
+                }
+                else
+                {
+                    $statement .= "$whereClause[0] $whereClause[1] ? ";
+                }
+
+                $values[] = $whereClause[2];
+            }
+        }
+
+        $statement = static::$connection->prepare($statement);
+
+        $statement->execute($values);
+
+        $result = $statement->fetchAll(PDO::FETCH_CLASS, get_called_class());
+
+        if ( ! $disableIntrospection)
+        {
+            static::prepareFetchRelationships($result);
+        }
+
+        return $result;
+
     }
 
     public static function findWhereIn(string $column, array $values)

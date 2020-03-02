@@ -12,7 +12,22 @@ class PhonesController extends Controller implements RestController
 {
     public function index(Request $request)
     {
-        $phones = Phone::findAll();
+        $searchParams = $request->all();
+
+        if (count($searchParams) > 0)
+        {
+            $searchCriteria = [];
+            foreach ($searchParams as $key => $val)
+            {
+                $searchCriteria[] = [$key, 'LIKE', "%$val%"];
+            }
+
+            $phones = Phone::findWhereMany($searchCriteria, 'OR',false);
+        }
+        else
+        {
+            $phones = Phone::findAll();
+        }
 
         return $this->json($phones);
     }

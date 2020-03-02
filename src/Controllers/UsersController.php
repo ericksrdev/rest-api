@@ -12,7 +12,22 @@ class UsersController extends Controller
 
     public function index(Request $request)
     {
-        $users = User::findAll();
+        $searchParams = $request->all();
+
+        if (count($searchParams) > 0)
+        {
+            $searchCriteria = [];
+            foreach ($searchParams as $key => $val)
+            {
+                $searchCriteria[] = [$key, 'LIKE', "%$val%"];
+            }
+
+            $users = User::findWhereMany($searchCriteria, 'OR');
+        }
+        else
+        {
+            $users = User::findAll();
+        }
 
         return $this->json($users);
     }
