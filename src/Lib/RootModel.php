@@ -42,10 +42,10 @@ abstract class RootModel
      * Finds a element of the entity by primaryKey
      * by default primaryKey is set to 'id', the primaryKey must be an int
      * @param int $id
-     * @param $table
+     * @param $disableIntrospection bool Disables child relations lookup
      * @return mixed
      */
-    public static function find(int $id, $table = null)
+    public static function find(int $id, $disableIntrospection = false)
     {
         static::bootIfNotBooted();
 
@@ -64,7 +64,10 @@ abstract class RootModel
             return null;
         }
 
-        static::prepareFetchRelationships($result);
+        if ( ! $disableIntrospection)
+        {
+            static::prepareFetchRelationships($result);
+        }
 
         return $result;
     }
@@ -168,7 +171,7 @@ abstract class RootModel
             $this->id = $this->id === null ? (int) static::$connection->lastInsertId() : $this->id;
         }
 
-        return (bool) $rowCount;
+        return (bool) $rowCount ;
     }
 
     public function delete()
@@ -189,22 +192,19 @@ abstract class RootModel
     private static function prepareFetchRelationships($result)
     {
         //Fetching collection relationships
-        if (count(static::$relations) > 0)
-        {
-            foreach (static::$relations as $relation)
-            {
-                if (is_array($result))
-                {
-                    foreach ($result as &$item)
-                    {
-                        $item->{$relation['name']} = static::fetchCollectionRelationships($relation, [$item->toArray()]);
-                    }
-                }
-                else
-                {
-                    $result->{$relation['name']} = static::fetchCollectionRelationships($relation, [$result->toArray()]);
-                }
 
+        foreach (static::$relations as $relation)
+        {
+            if (is_array($result))
+            {
+                foreach ($result as &$item)
+                {
+                    $item->{$relation['name']} = static::fetchCollectionRelationships($relation, [$item->toArray()]);
+                }
+            }
+            else
+            {
+                $result->{$relation['name']} = static::fetchCollectionRelationships($relation, [$result->toArray()]);
             }
 
         }
@@ -229,7 +229,7 @@ abstract class RootModel
                 break;
             case 'belongsTo':
             case 'hasOne':
-                $relationQueryResult = $relation['class_reference']::find($relation['foreign_key']);
+                $relationQueryResult = $relation['class_reference']::find($localKeyValues[0], true);
                 break;
         }
 
@@ -272,6 +272,11 @@ abstract class RootModel
                 continue;
             }
 
+            if ($key == 'id')
+            {
+                $val = (int) $val;
+            }
+
             if (in_array($key, array_column(static::$relations, 'name')))
             {
                 if (is_array($val))
@@ -281,7 +286,8 @@ abstract class RootModel
                         $relatedAttribute = $relatedAttribute->toArray();
                     }
                 }
-                elseif (is_object($val) && is_subclass_of($val, RootModel::class))
+
+                if (is_object($val))
                 {
                     $val->toArray();
                 }

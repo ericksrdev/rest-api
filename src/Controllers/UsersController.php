@@ -74,18 +74,18 @@ class UsersController extends Controller
 
     public function update(Request $request)
     {
+        $requiredParams = ['first_name', 'surname', 'user_id'];
+
+        if ( ! $request->validateRequired($requiredParams))
+        {
+            return $this->json(['message' => 'Required parameters not found (first_name, surname, user_id)'], 400);
+        }
+
         $user = User::find($request->get('user_id'));
 
         if ($user === null)
         {
             return $this->json(['message' => 'The requested user is not found'], 404);
-        }
-
-        $requiredParams = ['first_name', 'surname'];
-
-        if ( ! $request->validateRequired($requiredParams))
-        {
-            return $this->json(['message' => 'Required parameters not found (first_name, surname)'], 400);
         }
 
         $user->first_name = $request->get('first_name');
@@ -116,6 +116,13 @@ class UsersController extends Controller
 
     public function destroy(Request $request)
     {
+        $requiredParams = ['user_id'];
+
+        if ( ! $request->validateRequired($requiredParams))
+        {
+            return $this->json(['message' => 'Required parameters not found (user_id)'], 400);
+        }
+
         $user = User::find($request->get('user_id'));
 
         if ($user === null)
