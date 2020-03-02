@@ -9,6 +9,9 @@
 use App\Lib\Routing\Routes;
 
 Routes::get('/','IndexController@sayHi');
+/**
+ *  Users Routes
+ */
 
 Routes::get('/api/v1/users','UsersController@index');
 
@@ -20,15 +23,42 @@ Routes::put('/api/v1/users/{user_id}','UsersController@update');
 
 Routes::delete('/api/v1/users/{user_id}','UsersController@destroy');
 
-//Routes::get('/api/v1/phones','PhoneController@index');
-//
-//Routes::get('/api/v1/phones/{phone_id}','PhonesController@show');
-//
-//Routes::post('/api/v1/phones','PhonesController@store');
-//
-//Routes::put('/api/v1/phones/{phone_id}','PhonesController@update');
-//
-//Routes::patch('/api/v1/phones/{phone_id}','PhonesController@patchUpdate');
+/**
+ * User's phones
+ */
+
+Routes::post('/api/v1/users/{user_id}/phones','PhonesController@store');
+
+/**
+ * User's emails
+ */
+
+
+Routes::post('/api/v1/users/{user_id}/emails','EmailsController@store');
+
+/**
+ * Phones Routes
+ */
+
+Routes::get('/api/v1/phones','PhonesController@index');
+
+Routes::get('/api/v1/phones/{phone_id}','PhonesController@show');
+
+Routes::put('/api/v1/phones/{phone_id}','PhonesController@update');
+
+Routes::delete('/api/v1/phones/{phone_id}','PhonesController@destroy');
+
+/**
+ * Emails Routes
+ */
+
+Routes::get('/api/v1/emails','EmailsController@index');
+
+Routes::get('/api/v1/emails/{email_id}','EmailsController@show');
+
+Routes::put('/api/v1/emails/{email_id}','EmailsController@update');
+
+Routes::delete('/api/v1/emails/{email_id}','EmailsController@destroy');
 
 
 

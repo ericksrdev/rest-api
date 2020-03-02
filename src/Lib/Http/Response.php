@@ -29,6 +29,17 @@ class Response implements ResponseContract
                 {
                     $d = $d->toArray();
                 }
+
+                if (is_array($d))
+                {
+                    foreach ($d as &$subd)
+                    {
+                        if (is_object($subd) && is_subclass_of($subd, RootModel::class))
+                        {
+                            $subd = $subd->toArray();
+                        }
+                    }
+                }
             }
         }
 
