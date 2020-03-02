@@ -12,7 +12,22 @@ class EmailsController extends Controller implements RestController
 {
     public function index(Request $request)
     {
-        $emails = Email::findAll();
+        $searchParams = $request->all();
+
+        if (count($searchParams) > 0)
+        {
+            $searchCriteria = [];
+            foreach ($searchParams as $key => $val)
+            {
+                $searchCriteria[] = [$key, 'LIKE', "%$val%"];
+            }
+
+            $emails = Email::findWhereMany($searchCriteria, 'OR',false);
+        }
+        else
+        {
+            $emails = Email::findAll();
+        }
 
         return $this->json($emails);
     }
